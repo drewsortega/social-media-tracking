@@ -2,5 +2,14 @@
     "name": "Social Media Usage Tracker",
     "version": "0.1",
     "description": "CS361 Spring 2019 Project",
+    "permissions": [
+        "storage"
+    ],
+    "background": {
+        "scripts": [
+            "background.js"
+        ],
+        "persistent": false
+    },
     "manifest_version": 2
 }
