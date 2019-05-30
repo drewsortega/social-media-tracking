@@ -1,35 +1,27 @@
 {
-    "name": "Social Media Usage Tracker",
-    "version": "0.1",
-    "description": "CS361 Spring 2019 Project",
-    "permissions": [
-        "activeTab",
-        "declarativeContent",
-        "storage"
-    ],
-    "background": {
-        "scripts": [
-            "src/background.js"
-        ],
-        "persistent": false
-    },
-    "browser_action": {
-        "default_popup": "public/html/index.html",
-        "default_icon": {
-            "16": "public/images/icon16.png",
-            "32": "public/images/icon32.png",
-            "64": "public/images/icon64.png",
-            "48": "public/images/icon48.png",
-            "128": "public/images/icon128.png"
-        }
-    },
-    "icons": {
-        "16": "public/images/icon16.png",
-        "32": "public/images/icon32.png",
-        "64": "public/images/icon64.png",
-        "48": "public/images/icon48.png",
-        "128": "public/images/icon128.png"
-    },
-    "options_page": "public/html/options.html",
-    "manifest_version": 2
+  "name": "CS361 - Group 19 - Term Project",
+  "version": "1.0",
+  "description": "Social Media Tracking Browser Plugin",
+  "permissions": ["activeTab", "declarativeContent", "storage"],
+  "options_page": "options.html",
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "page_action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "images/get_started16.png",
+      "32": "images/get_started32.png",
+      "48": "images/get_started48.png",
+      "128": "images/get_started128.png"
+    }
+  },
+  "icons": {
+    "16": "images/get_started16.png",
+    "32": "images/get_started32.png",
+    "48": "images/get_started48.png",
+    "128": "images/get_started128.png"
+  },
+  "manifest_version": 2
 }
