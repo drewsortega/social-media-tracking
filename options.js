@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 $('#google-button').on('click', function () {
+    console.log('google login button clicked')
     // Initialize with your OAuth.io app public key
     OAuth.initialize('YOUR_OAUTH_KEY');
     // Use popup for oauth
@@ -42,3 +43,4 @@ function renderButton() {
         'onsuccess': onSuccess,
         'onfailure': onFailure
     });
+}
