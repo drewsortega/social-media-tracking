@@ -12,4 +12,9 @@ Usage tracing for social media sites. CS361 Project, Spring 2019
 1) A folder navigation window will appear. Select the folder for the entire repository
 1) After making a change to the extension, Click the refresh button on the tile for the extension to load in changes.
 
+## Accessing the temporary dashboard
+
+1) Click on the extension icon in the top of the browser
+1) Click "Options"
+
 The extension is now loaded in to your browser.
