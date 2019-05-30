@@ -2,26 +2,35 @@
   "name": "CS361 - Group 19 - Term Project",
   "version": "1.0",
   "description": "Social Media Tracking Browser Plugin",
-  "permissions": ["activeTab", "declarativeContent", "storage"],
-  "options_page": "options.html",
+  "permissions": [
+    "activeTab",
+    "declarativeContent",
+    "storage",
+    "identity"
+  ],
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlXFsC/YT6q5eRwB/EKC3v+Hgwl138/mT9T5drO7c+JHXecFNYK/WtY6RHzDLR8ziYX34LnYBciSBwaiapClDMedzhfgDmkshMiOuHER9jn4p9xg3CWzDWUY1tLGFsYcoUqVZo+2L0o5RX3ri4qpN1AIa5k3J2hBmFKEM6iLysNOq/rqY8P4rbuoV/kT5f8LA3r1vJObUwUNdo8CXa27U2O6u6AXCJf/OmlxdWmRrmPhUVTqWwOU9Qa24D4PeGe2v42Wi1k5VQcellvISHCgaRaXSCa0lb4S9mTrSL/jKFsl+e3Uj2T9B8jHyTeX/SywAIC5/J93+dub/wLWDBmnA8wIDAQAB",
+  "manifest_version": 2,
+  "browser_action": {
+    "default_title": "Social Media Tracking"
+  },
   "background": {
-    "scripts": ["background.js"],
+    "scripts": [
+      "background.js"
+    ],
     "persistent": false
   },
-  "page_action": {
-    "default_popup": "popup.html",
-    "default_icon": {
-      "16": "images/get_started16.png",
-      "32": "images/get_started32.png",
-      "48": "images/get_started48.png",
-      "128": "images/get_started128.png"
-    }
-  },
+  "options_page": "options.html",
   "icons": {
     "16": "images/get_started16.png",
     "32": "images/get_started32.png",
     "48": "images/get_started48.png",
     "128": "images/get_started128.png"
   },
-  "manifest_version": 2
+  "oauth2": {
+    "client_id": "277071098351-g0e0t1e4t9pfnag3sl3i69gb055r5een.apps.googleusercontent.com",
+    "scopes": [
+      "profile",
+      "email"
+    ]
+  }
 }

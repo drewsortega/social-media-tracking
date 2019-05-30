@@ -13,18 +13,20 @@ Description:
 <!DOCTYPE html>
 
 <html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Group 19 - Social Media Tracker</title>
+
     <link rel="stylesheet" , href="app_style.css" />
-    <meta name="google-signin-client_id" content="YOUR_CLIENT_ID.apps.googleusercontent.com">
+    <script type="text/javascript" src="oauth.js"></script>
+</head>
 
-    <head>
-        <meta charset="utf-8" />
-        <title>Group 19 - Social Media Tracker</title>
-    </head>
-
+<body>
     <div class="flex-container_1">
         <a href="#" class="fb btn">Login with Facebook</a>
         <a href="#" class="tw btn">Login with Twitter</a>
-        <a href="#" class="go btn">Login with Google+</a>
+        <button id="gButton" class="go btn">Login with Google+</buton>
     </div>
 
     <div class="flex-container_2">
@@ -34,10 +36,10 @@ Description:
             <input type="submit" value="Login">
             <a href="https://accounts.google.com/signin/recovery">Forgot My Password</a>
             <br><a href="URL">Create Account</a><br />
-        </form>   
+        </form>
     </div>
 
-    <body>
-    </body>
+    <script src="options.js"></script>
+</body>
 
 </html>
