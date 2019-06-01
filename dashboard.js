@@ -2,20 +2,21 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// FIXME: Replace this with the code for the dashboard.
+
 'use strict';
 
-let changeColor = document.getElementById('changeColor');
+window.onload = function () {
 
-chrome.storage.sync.get('color', function(data) {
-  changeColor.style.backgroundColor = data.color;
-  changeColor.setAttribute('value', data.color);
-});
-
-changeColor.onclick = function(element) {
-  let color = element.target.value;
-  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-    chrome.tabs.executeScript(
-        tabs[0].id,
-        {code: 'document.body.style.backgroundColor = "' + color + '";'});
+  document.getElementById('logout').addEventListener('click', function () {
+    chrome.identity.getAuthToken({interactive: false }, function (token) {
+        if (token != undefined) {
+            chrome.identity.removeCachedAuthToken({token: token});
+            // FIXME: This should probably be handled globally, in background.js, using onSignInChanged().
+            chrome.browserAction.setPopup({popup: ''});
+            // Close the popup.
+            window.close();
+        }
+    });
   });
-};
+}
