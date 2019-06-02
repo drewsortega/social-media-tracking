@@ -6,17 +6,22 @@
 
 'use strict';
 
-window.onload = function () {
+
+// Suppress the dashboard if the user is not logged in.
+chrome.identity.getAuthToken({interactive: false }, function (token) {
+  if (token == undefined) {
+    // chrome.tabs.create({ url: 'options.html' });
+    logout(window, token);
+  }
+});
+
+
+window.addEventListener('load', function () {
 
   document.getElementById('logout').addEventListener('click', function () {
     chrome.identity.getAuthToken({interactive: false }, function (token) {
-        if (token != undefined) {
-            chrome.identity.removeCachedAuthToken({token: token});
-            // FIXME: This should probably be handled globally, in background.js, using onSignInChanged().
-            chrome.browserAction.setPopup({popup: ''});
-            // Close the popup.
-            window.close();
-        }
+      logout(window, token);
     });
   });
-}
+
+});
