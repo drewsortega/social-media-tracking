@@ -1,51 +1,52 @@
-const express = require('express')
-const app = express()
-let PORT = process.env.PORT | 54102
+const express = require('express');
+require('dotenv').config();
+const app = express();
+let PORT = process.env.PORT | 54102;
 
 
 var db_config = {
     server: "cs361project.database.windows.net",
     options: {
-        encrypt: true, 
+        encrypt: true,
         database: "CS361_PROJECT"
     },
     authentication: {
-      type: "default",
-      options: {  
-        userName: "danrivman@cs361project",
-        password: "...",
-      }
+        type: "default",
+        options: {
+            userName: process.env.DB_USERNAME,
+            password: process.env.DB_PASSWORD,
+        }
     }
-  };
-  
-  var Connection = require('tedious').Connection;
-  var connection = new Connection(db_config);
-  
-  var Request = require('tedious').Request;
-  request = new Request("select 'hello world'", function(err, rowCount) {
-      if (err) {
-          console.log(err);
-      } else {
-          console.log(rowCount + ' rows');
-      }
-  });
-  
-  request.on('row', function(columns) { 
-      columns.foreach(function(column) {
-          console.log(column.value);
-      });
-  });
-  
-  // TODO: Bundle this connection logic into a separate file that we can reference as a module, to hide all this junk.
-  connection.on('connect', function(err) {
-      if (err) {
-          console.log("FATAL: Failed to connect: " + err);
-          process.exit(1);
-      } else {
-          console.log("Connected to database.");
-          connection.execSql(request);
-      }
-  });
+};
+
+var Connection = require('tedious').Connection;
+var connection = new Connection(db_config);
+
+var Request = require('tedious').Request;
+request = new Request("select 'hello world'", function (err, rowCount) {
+    if (err) {
+        console.log(err);
+    } else {
+        console.log(rowCount + ' rows');
+    }
+});
+
+request.on('row', function (columns) {
+    columns.foreach(function (column) {
+        console.log(column.value);
+    });
+});
+
+// TODO: Bundle this connection logic into a separate file that we can reference as a module, to hide all this junk.
+connection.on('connect', function (err) {
+    if (err) {
+        console.log("FATAL: Failed to connect: " + err);
+        process.exit(1);
+    } else {
+        console.log("Connected to database.");
+        connection.execSql(request);
+    }
+});
 
 
 /*
