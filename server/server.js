@@ -1,6 +1,12 @@
-const express = require('express');
 require('dotenv').config();
+
+const express = require('express');
 const app = express();
+const Bluebird = require('bluebird');
+var Connection = require('tedious').Connection;
+Bluebird.promisify(require('tedious').Request);
+const _ = require('lodash');
+
 let PORT = process.env.PORT | 54102;
 
 
@@ -19,81 +25,40 @@ var db_config = {
     }
 };
 
-var Connection = require('tedious').Connection;
 var connection = new Connection(db_config);
 
-var Request = require('tedious').Request;
-request = new Request("select 'hello world'", function (err, rowCount) {
-    if (err) {
-        console.log(err);
-    } else {
+app.post('/auth/login_signup', (req, res) => {
+    Bluebird.try(() => {
+        if (req.body && !_.isNull(req.body.id) && _.isNumber(+req.body.id)
+            && !_.isNull(req.body.full_name) && _.isString(req.body.full_name)
+            && !_.isNull(rwq.body.email) && +_.isString(req.body.email)
+        ) {
+            request = new Request.call("select * from [dbo].[cs361_project]");
+            connection.execSql(request);
+            return request;
+        } else {
+            throw new Error("Malformed post");
+        }
+    }).then((rowCount, rows) => {
         console.log(rowCount + ' rows');
-    }
+        console.log(rows);
+        res.json(rows);
+    }).catch((err) => {
+        console.log(err);
+        res.status(401);
+        res.send("error");
+    }).finally(() => {
+    })
 });
 
-request.on('row', function (columns) {
-    columns.foreach(function (column) {
-        console.log(column.value);
-    });
-});
-
-// TODO: Bundle this connection logic into a separate file that we can reference as a module, to hide all this junk.
 connection.on('connect', function (err) {
     if (err) {
         console.log("FATAL: Failed to connect: " + err);
         process.exit(1);
     } else {
         console.log("Connected to database.");
-        connection.execSql(request);
+        app.listen(PORT, () => {
+            console.log(`Server running on port ${PORT}`);
+        });
     }
 });
-
-
-/*
-// START mssql connection attempt
-// Here is a connection attempt using the mssql module. Not sure which one is less confusing.
-
-const sql = require('mssql')
- 
-const config = {
-    user: 'danrivman@cs361project',
-    password: '...',
-    server: 'cs361project.database.windows.net',
-    database: 'CS361_PROJECT',
- 
-    options: {
-        encrypt: true // Use this if you're on Windows Azure
-    }
-}
-
-const pool = new sql.ConnectionPool(config, 
-    err => { 
-        console.log("FATAL: Failed to create db pool! " + err);
-        process.exit(1);
-    });
-
-pool.on('error', err => { 
-    console.log("Pool error event: " + err);
-});
-
-// Seems unnecessary?
-pool.connect(err => { 
-    console.log("FATAL: Pool connection error: " + err);
-    process.exit(1);
-});
-
-
-
-sql.request().query("select * from dual ", (err, result) => {
-    if (err) { 
-        console.log("query error: " + err);
-    } else { 
-        console.log("result: " + result);
-    }
-});
-
-// END mssql connection attempt
-*/
-
-
-app.listen(PORT)
