@@ -12,10 +12,10 @@ let PORT = process.env.PORT | 54102;
 
 
 var db_config = {
-    server: "cs361project.database.windows.net",
+    server: process.env.DB_ADDRESS,
     options: {
         encrypt: true,
-        database: "CS361_PROJECT"
+        database: process.env.DB_NAME
     },
     authentication: {
         type: "default",
@@ -53,7 +53,7 @@ app.post('/auth/login_signup', (req, res) => {
             user = rows[0];
             query += `update [dbo].[cs361_project] set user_token=${req.body.token} where id=${req.body.id}`;
         } else if (rowCount == 0) {
-            query += `insert into [dbo].[cs361_project] (FIELDS HERE) values (VALUES HERE)`
+            query += `insert into [dbo].[cs361_project] (id, full_name, given_name, image_url, email, id_token) values (${req.body.id}, ${req.body.full_name | 'null'}, ${req.body.given_name | 'null'}, ${req.body.image_url | 'null'}, ${req.body.email | 'null'}, ${req.body.id_token})`
         } else if (rowCount > 1) {
             Bluebird.reject("Too many users");
         }
