@@ -80,9 +80,8 @@ connection.on('connect', function (err) {
         process.exit(1);
     } else {
         console.log("Connected to database.");
+        app.listen(PORT, () => {
+            console.log(`Server running on port ${PORT}`);
+        });
     }
-});
-
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
 });
