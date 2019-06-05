@@ -12,10 +12,10 @@ let PORT = process.env.PORT | 54102;
 
 
 var db_config = {
-    server: "cs361project.database.windows.net",
+    server: "cs-361-spring-2019-group-19.database.windows.net", // Dan's instance for fallback: "cs361project.database.windows.net",
     options: {
         encrypt: true,
-        database: "CS361_PROJECT"
+        database: "social_media_tracking", // Dan's instance for fallback: "CS361_PROJECT"
     },
     authentication: {
         type: "default",
