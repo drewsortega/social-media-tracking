@@ -5,7 +5,7 @@ const app = express();
 const Bluebird = require('bluebird');
 const bodyParser = require('body-parser');
 var Connection = require('tedious').Connection;
-const Request = Bluebird.promisify(require('tedious').Request);
+const Request = require('tedious').Request;
 const _ = require('lodash');
 
 let PORT = process.env.PORT | 54102;
@@ -39,28 +39,36 @@ app.post('/auth/login_signup', (req, res) => {
             && !_.isNull(req.body.email) && _.isString(req.body.email)
             && !_.isNull(req.body.token) && _.isString(req.body.token)
         ) {
-            let request = new Request(`select * from [dbo].[cs361_project] where id=${req.body.id}`);
+            request = new Request(`select * from [dbo].[cs361_project] where id=${req.body.id}`, (rowCount) => {
+                console.log(rowCount);
+                if (rowCount == 0 || rowCount > 1) {
+                    Bluebird.resolve(null);
+                }
+            });
             connection.execSql(request);
-            return request;
+            request.on('row', (columns) => {
+                Bluebird.resolve(columns)
+            })
         } else {
             Bluebird.reject("Malformed post");
         }
-    }).then((rowCount, rows) => {
-        console.log(rowCount + ' rows');
-        console.log(rows);
+    }).then((columns) => {
+        console.log('columns: ');
+        console.log(columns);
         let query = '';
-        if (rowCount == 1) {
+        if (columns) {
             user = rows[0];
             query += `update [dbo].[cs361_project] set user_token=${req.body.token} where id=${req.body.id}`;
-        } else if (rowCount == 0) {
-            query += `insert into [dbo].[cs361_project] (id, full_name, given_name, image_url, email, id_token) values (${req.body.id}, ${req.body.full_name | 'null'}, ${req.body.given_name | 'null'}, ${req.body.image_url | 'null'}, ${req.body.email | 'null'}, ${req.body.id_token})`
-        } else if (rowCount > 1) {
-            Bluebird.reject("Too many users");
+        } else {
+            query += `insert into [dbo].[cs361_project] (id, full_name, given_name, image_url, email, id_token) values (${req.body.id}, ${req.body.full_name ? `'${req.body.full_name}'` : 'null'}, ${req.body.given_name ? `'${req.body.given_name}'` : 'null'}, ${req.body.image_url ? `'${req.body.image_url}'` : 'null'}, ${req.body.email ? `'${req.body.email}'` : 'null'}, '${req.body.token}')`;
         }
-        let request = new Request(query);
+        console.log(query);
+        let request = new Request(query, (rowCount) => {
+            Bluebird.resolve(rowCount);
+        });
         connection.execSql(request);
-        res.json(rows);
-    }).then((rowCount, rows) => {
+    }).then((rowCount) => {
+        console.log(rowCount);
         if (rowCount == 1) {
             res.status(200).send("successfully added/updated user");
         } else {
@@ -69,9 +77,7 @@ app.post('/auth/login_signup', (req, res) => {
     }).catch((err) => {
         console.log(err);
         res.status(401).send(err);
-    }).finally(() => {
-        res.status(401).send("unknown error");
-    });
+    })
 });
 
 connection.on('connect', function (err) {
