@@ -13,11 +13,15 @@ Server is now installed on your machine.
 
 1) Set environment variables:
 
-    _option 1:_ copy .env-sample to .env, then fill missing fields (PORT, DB_USERNAME, DB_PASSWORD)
+    - _option 1:_ copy .env-sample to .env, then fill missing fields (PORT, DB_USERNAME, DB_PASSWORD)
 
-    _option 2:_ set environment variables in your terminal, doing:
-    `export PORT=PORT_HERE`, `export DB_USERNAME=USERNAME_HERE`, `export DB_PASSWORD=PASSWORD_HERE`.
-
+    - _option 2:_ set environment variables in your terminal, doing:
+    
+        ```bash
+        export PORT=PORT_HERE
+        export DB_USERNAME=USERNAME_HERE
+        export DB_PASSWORD=PASSWORD_HERE
+        ```
 1) - dev: run `npm run debug`
     - prod: run `npm start`
 
