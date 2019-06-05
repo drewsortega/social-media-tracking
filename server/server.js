@@ -77,7 +77,7 @@ app.post('/auth/login_signup', (req, res) => {
 connection.on('connect', function (err) {
     if (err) {
         console.log("FATAL: Failed to connect: " + err);
-        //process.exit(1);
+        process.exit(1);
     } else {
         console.log("Connected to database.");
     }
