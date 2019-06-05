@@ -68,7 +68,7 @@ app.post('/auth/login_signup', (req, res) => {
                     resolve(rowCount);
                 });
                 connection.execSql(request);
-            } catch{
+            } catch(err) {
                 reject("failed to finish sql query");
             }
         });
