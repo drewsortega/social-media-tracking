@@ -1,11 +1,12 @@
 module.exports.with = function(connection) {
 
-    const Bluebird = require('bluebird');
     const Request = require('tedious').Request;
     var express = require('express');
     var router = express.Router();
     var baseRoute = "debug";
 
+
+    /************** GET /debug/ **************/
 
     router.get('/', function(req, res) {
 
@@ -15,47 +16,73 @@ module.exports.with = function(connection) {
     });
 
 
+    /************** GET /debug/list-tables **************/
+
     router.get('/list-tables', function(req, res) {
 
         var context = { column_listing: undefined, output: "" };
 
-        Bluebird.try(() => {
-            let query = " \
-            select t.name 'table', c.name 'column' \
-            from \
-                sys.columns c \
-                inner join sys.tables t on c.object_id = t.object_id \
-            order by 1, 2";
-            let request = new Request(query, (err, rowCount) => {
-                if (err) { 
-                    console.log("Query error: " + err);
-                    // res.status(401);
-                    // res.send(err);
-                }
-                console.log("row count: " + rowCount);
-            });
+        let query = " \
+        select t.name 'table', c.name 'column' \
+        from \
+            sys.columns c \
+            inner join sys.tables t on c.object_id = t.object_id \
+        order by 1, 2";
+        let request = new Request(query, (err, rowCount) => {
+            if (err) { 
+                console.log("Query error: " + err);
+                // res.status(401);
+                // res.send(err);
+            }
+            console.log("row count: " + rowCount);
+        });
 
-            request.on('row', (columns) => {
-                addRow(columns, context);
-            });
+        request.on('row', (columns) => {
+            addRow(columns, context);
+        });
 
-            request.on('requestCompleted', (rowCount, more, rows) => {
-                sendResult(res, context);
-            });
+        request.on('requestCompleted', (rowCount, more, rows) => {
+            sendResult(res, context);
+        });
 
-            connection.execSql(request);
-
-            
-        })
-        .catch((err) => {
-            console.log("error caught: " + err);
-            // res.status(401);
-            // res.write(err);
-            // res.end();
-        })
-    
+        connection.execSql(request);    
     });
 
+
+    /************** GET /debug/list-users **************/
+
+    router.get('/list-users', function(req, res) {
+
+        var context = { column_listing: undefined, output: "" };
+
+        let query = " \
+        select * \
+        from \
+            cs361_project u \
+        order by id";
+        let request = new Request(query, (err, rowCount) => {
+
+            if (err) { 
+                console.log("Query error: " + err);
+                res.status(401);
+                // res.send(err);
+            }
+            console.log("row count: " + rowCount);
+        });
+
+        request.on('row', (columns) => {
+            addRow(columns, context);
+        });
+
+        request.on('requestCompleted', (rowCount, more, rows) => {
+            sendResult(res, context);
+        });
+
+        connection.execSql(request);    
+    });
+
+
+    /************** DB row handler and result handler functions **************/
 
     function addRow(columns, context) { 
 
@@ -81,47 +108,7 @@ module.exports.with = function(connection) {
         res.send("<table border='1px'>" + context.column_listing + context.output);
     };
 
-    
-    router.get('/list-users', function(req, res) {
 
-        var context = { column_listing: undefined, output: "" };
-
-        Bluebird.try(() => {
-            let query = " \
-            select * \
-            from \
-                cs361_project u \
-            order by id";
-            let request = new Request(query, (err, rowCount) => {
-
-                if (err) { 
-                    console.log("Query error: " + err);
-                    res.status(401);
-                    // res.send(err);
-                }
-                console.log("row count: " + rowCount);
-            });
-
-            request.on('row', (columns) => {
-                addRow(columns, context);
-            });
-
-            request.on('requestCompleted', (rowCount, more, rows) => {
-                sendResult(res, context);
-            });
-
-            connection.execSql(request);
-
-            
-        })
-        .catch((err) => {
-            console.log("error caught: " + err);
-            // res.status(401);
-            // res.write(err);
-            // res.end();
-        })
-    
-    });
 
     return router;
 }
