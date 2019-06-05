@@ -30,6 +30,19 @@ var connection = new Connection(db_config);
 
 app.use(bodyParser.json());
 
+// query to GET user profile info from Google -- unsure where this should fit in
+// fetch(
+//     'https://www.googleapis.com/userinfo/v2/me',         {
+//         method: 'GET',
+//         headers: {
+//             'Content-length': 0,
+//             'Authorization': 'Bearer <OUR RETURNED TOKEN>
+//         }
+//     }
+// )
+// .then(res => res.json())
+// .then(console.log)
+
 app.post('/auth/login_signup', (req, res) => {
     console.log(req.body);
     let user = {};
