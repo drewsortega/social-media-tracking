@@ -80,6 +80,9 @@ app.post('/auth/login_signup', (req, res) => {
     })
 });
 
+var Debug = require('./debug.js').with(connection);
+app.use('/debug', Debug);
+
 connection.on('connect', function (err) {
     if (err) {
         console.log("FATAL: Failed to connect: " + err);
