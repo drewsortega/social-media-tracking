@@ -11,7 +11,7 @@ Server is now installed on your machine.
 
 ## Starting the server
 
-1) Set environment variables: `export PORT={PUT PUT HERE}`
+1) Set environment variables: `export PORT={PUT PORT HERE}`
 1) - dev: run `npm run debug`
     - prod: run `npm start`
 
