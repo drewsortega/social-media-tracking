@@ -33,7 +33,7 @@ app.use(bodyParser.json());
 app.post('/auth/login_signup', (req, res) => {
     console.log(req.body);
     let user = {};
-    Bluebird.try(() => {
+    new Bluebird.Promise((resolve, reject) => {
         if (req.body && !_.isNull(req.body.id) && _.isNumber(+req.body.id)
             && !_.isNull(req.body.full_name) && _.isString(req.body.full_name)
             && !_.isNull(req.body.email) && _.isString(req.body.email)
@@ -42,38 +42,39 @@ app.post('/auth/login_signup', (req, res) => {
             request = new Request(`select * from [dbo].[cs361_project] where id=${req.body.id}`, (rowCount) => {
                 console.log(rowCount);
                 if (rowCount == 0 || rowCount > 1) {
-                    Bluebird.resolve(null);
+                    resolve(null);
                 }
             });
             connection.execSql(request);
             request.on('row', (columns) => {
-                Bluebird.resolve(columns)
+                resolve(columns)
             })
         } else {
-            Bluebird.reject("Malformed post");
+            reject("Malformed post");
         }
     }).then((columns) => {
-        console.log('columns: ');
-        console.log(columns);
-        let query = '';
-        if (columns) {
-            user = rows[0];
-            query += `update [dbo].[cs361_project] set user_token=${req.body.token} where id=${req.body.id}`;
-        } else {
-            query += `insert into [dbo].[cs361_project] (id, full_name, given_name, image_url, email, id_token) values (${req.body.id}, ${req.body.full_name ? `'${req.body.full_name}'` : 'null'}, ${req.body.given_name ? `'${req.body.given_name}'` : 'null'}, ${req.body.image_url ? `'${req.body.image_url}'` : 'null'}, ${req.body.email ? `'${req.body.email}'` : 'null'}, '${req.body.token}')`;
-        }
-        console.log(query);
-        let request = new Request(query, (rowCount) => {
-            Bluebird.resolve(rowCount);
+        return new Bluebird.Promise((resolve, reject) => {
+            try {
+                console.log('columns: ');
+                console.log(columns);
+                let query = '';
+                if (columns) {
+                    query += `update [dbo].[cs361_project] set user_token='${req.body.token}' where id=${req.body.id}`;
+                } else {
+                    query += `insert into [dbo].[cs361_project] (id, full_name, given_name, image_url, email, user_token) values (${req.body.id}, ${req.body.full_name ? `'${req.body.full_name}'` : 'null'}, ${req.body.given_name ? `'${req.body.given_name}'` : 'null'}, ${req.body.image_url ? `'${req.body.image_url}'` : 'null'}, ${req.body.email ? `'${req.body.email}'` : 'null'}, '${req.body.token}')`;
+                }
+                console.log(query);
+                let request = new Request(query, (rowCount) => {
+                    resolve(rowCount);
+                });
+                connection.execSql(request);
+            } catch{
+                reject("failed to finish sql query");
+            }
         });
-        connection.execSql(request);
     }).then((rowCount) => {
         console.log(rowCount);
-        if (rowCount == 1) {
-            res.status(200).send("successfully added/updated user");
-        } else {
-            res.status(400).send("failed to add/update user, server failure");
-        }
+        res.status(200).send("successfully added/updated user");
     }).catch((err) => {
         console.log(err);
         res.status(401).send(err);
