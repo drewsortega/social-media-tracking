@@ -3,8 +3,9 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const Bluebird = require('bluebird');
+const bodyParser = require('body-parser');
 var Connection = require('tedious').Connection;
-Bluebird.promisify(require('tedious').Request);
+const Request = Bluebird.promisify(require('tedious').Request);
 const _ = require('lodash');
 
 let PORT = process.env.PORT | 54102;
@@ -27,13 +28,16 @@ var db_config = {
 
 var connection = new Connection(db_config);
 
+app.use(bodyParser.json());
+
 app.post('/auth/login_signup', (req, res) => {
+    console.log(req.body);
     Bluebird.try(() => {
         if (req.body && !_.isNull(req.body.id) && _.isNumber(+req.body.id)
             && !_.isNull(req.body.full_name) && _.isString(req.body.full_name)
-            && !_.isNull(rwq.body.email) && +_.isString(req.body.email)
+            && !_.isNull(req.body.email) && +_.isString(req.body.email)
         ) {
-            request = new Request.call("select * from [dbo].[cs361_project]");
+            let request = new Request("select * from [dbo].[cs361_project]");
             connection.execSql(request);
             return request;
         } else {
