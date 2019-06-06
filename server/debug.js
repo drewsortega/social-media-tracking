@@ -28,11 +28,11 @@ module.exports.with = function(connection) {
             sys.columns c \
             inner join sys.tables t on c.object_id = t.object_id \
         order by 1, 2";
+
         let request = new Request(query, (err, rowCount) => {
             if (err) { 
                 console.log("Query error: " + err);
-                // res.status(401);
-                // res.send(err);
+                res.status(401).send('');
             }
             console.log("row count: " + rowCount);
         });
@@ -41,7 +41,7 @@ module.exports.with = function(connection) {
             addRow(columns, context);
         });
 
-        request.on('requestCompleted', (rowCount, more, rows) => {
+        request.on('requestCompleted', () => {
             sendResult(res, context);
         });
 
@@ -57,15 +57,14 @@ module.exports.with = function(connection) {
 
         let query = " \
         select * \
-        from \
-            cs361_project u \
+        from cs361_project u \
         order by id";
+
         let request = new Request(query, (err, rowCount) => {
 
             if (err) { 
                 console.log("Query error: " + err);
-                res.status(401);
-                // res.send(err);
+                res.status(401).send('');
             }
             console.log("row count: " + rowCount);
         });
@@ -74,7 +73,7 @@ module.exports.with = function(connection) {
             addRow(columns, context);
         });
 
-        request.on('requestCompleted', (rowCount, more, rows) => {
+        request.on('requestCompleted', () => {
             sendResult(res, context);
         });
 

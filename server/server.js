@@ -94,17 +94,83 @@ app.post('/auth/login_signup', (req, res) => {
     })
 });
 
+
+app.get('/auth/login_retrieve/:user_token', (req, res) => {
+
+    let token = req.params.user_token;
+
+    if (token.length < 1 || token.length > 200 || !/^[\w.-]+$/.test(token)) { 
+        // Malformed post
+        res.status(401).send('{}');
+        return;
+    }
+
+    new Bluebird.Promise((resolve, reject) => {
+
+        request = new Request(` \
+            select given_name, image_url \
+            from [dbo].[cs361_project] \ 
+            where id_token='${token}'`, (err, rowCount) => {
+            if (err) {
+                console.log("login_retrieve failure:");
+                console.log(err);
+                reject(err);
+            }
+            if (rowCount == 0) {
+                resolve(null);
+            }
+        });
+
+        request.on('row', (columns) => {
+            resolve(columns);
+        });
+
+        connection.execSql(request);
+
+    }).then((columns) => {
+
+        if (columns) {
+            response = {};
+            response.given_name = columns[0].value;
+            response.image_url = columns[1].value;
+            res.status(200).send(JSON.stringify(response));
+        } else {
+            res.status(404).send({});
+        }
+        
+    }).catch((err) => {
+        console.log(err);
+        res.status(401).send('{}');
+    })
+});
+
+
 var Debug = require('./debug.js').with(connection);
 app.use('/debug', Debug);
 
+
+
 connection.on('connect', function (err) {
     if (err) {
-        console.log("FATAL: Failed to connect: " + err);
+        console.log("FATAL: Database failed to connect:");
+        console.log(err);
         process.exit(1);
     } else {
         console.log("Connected to database.");
-        app.listen(PORT, () => {
-            console.log(`Server running on port ${PORT}`);
-        });
     }
+});
+
+connection.on('end', function () {
+    console.log("Database connection ended. Trying to reconnect.");
+    connection = new Connection(db_config);
+});
+
+connection.on('error', function (err) {
+    console.log("FATAL: Database connection error:");
+    console.log(err);
+    process.exit(1);
+});
+
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
 });
