@@ -17,7 +17,7 @@ Usage tracing for social media sites. CS361 Project, Spring 2019
 1) Click on the extension icon in the top of the browser
 1) Click "Options"
 
-The extension is now loaded in to your browser.
+The extension is now loaded in to your browser. This extension, by defaut, points to flip1.engr.oregonstate.edu:54102 for the backend server. If you would like to run your own backend server, see below.
 
 ## Running the server
 
